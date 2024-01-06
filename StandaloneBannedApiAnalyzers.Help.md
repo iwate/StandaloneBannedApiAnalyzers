@@ -1,0 +1,49 @@
+# How to use StandaloneBannedApiAnalyzers
+
+The following file or files have to be added to any project referencing this package to enable analysis:
+
+- BannedSymbols.txt
+- BannedSymbols.\*.txt
+
+This can be done by:
+
+- In Visual Studio, right click project in Solution Explorer, and choose "Add -> New Items", then select "Text File" in "Add new item" dialog.
+- Or, create the file at the location you desire, then add the following text to your project/target file (replace file path with its actual location):
+
+  ```xml
+  <ItemGroup>
+    <AdditionalFiles Include="BannedSymbols.txt" />
+  </ItemGroup>
+  ```
+
+To add a symbol to the banned list, just add an entry in the format below to one of the configuration files (Description Text will be displayed as description in diagnostics, which is optional):
+
+```txt
+{Documentation Comment ID string for the symbol}[;Description Text]
+```
+
+Comments can be indicated with `//`, in the same way that they work in C#.
+
+For details on ID string format, please refer to ["ID string format"](https://github.com/dotnet/csharpstandard/blob/standard-v6/standard/documentation-comments.md#d42-id-string-format).
+
+Examples of BannedSymbols.txt entries for symbols declared in the source below:
+
+```cs
+namespace N
+{
+    class BannedType
+    {
+        public BannedType() {}
+    }
+
+    class BannedType<T>
+    {
+    }
+}
+```
+
+| Symbol in Source                      | Sample Entry in BannedSymbols.txt
+| -----------                           | -----------
+| `class BannedType`                    | `T:N.BannedType;Don't use BannedType`
+| `class BannedType<T>`                 | ``T:N.BannedType`1;Don't use BannedType<T>``
+| `namespace N`                         | `N:N`
