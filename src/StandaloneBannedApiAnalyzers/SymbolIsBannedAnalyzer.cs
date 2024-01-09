@@ -9,37 +9,40 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace StandaloneBannedApiAnalyzers
 {
-    internal static class SymbolIsBannedAnalyzer
-    {
-        public static readonly DiagnosticDescriptor SymbolIsBannedRule = new DiagnosticDescriptor(
-            id: "RS0030",
-            title: "Do not use banned APIs",
-            messageFormat: "The symbol '{0}' is banned in this project{1}",
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true,
-            description: "The symbol has been marked as banned in this project, and an alternate should be used instead.",
-            helpLinkUri: "https://github.com/iwate/StandaloneBannedApiAnalyzers/blob/main/StandaloneBannedApiAnalyzers.Help.md");
-
-        public static readonly DiagnosticDescriptor DuplicateBannedSymbolRule = new DiagnosticDescriptor(
-            id: "RS0031",
-            title: "he list of banned symbols contains a duplicate",
-            messageFormat: "The symbol '{0}' is listed multiple times in the list of banned APIs",
-            category: "ApiDesign",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true,
-            description: "The list of banned symbols contains a duplicate.",
-            helpLinkUri: "https://github.com/iwate/StandaloneBannedApiAnalyzers/blob/main/StandaloneBannedApiAnalyzers.Help.md");
-    }
-
-
     public abstract class SymbolIsBannedAnalyzer<TSyntaxKind> : SymbolIsBannedAnalyzerBase<TSyntaxKind>
         where TSyntaxKind : struct
     {
-        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(SymbolIsBannedAnalyzer.SymbolIsBannedRule, SymbolIsBannedAnalyzer.DuplicateBannedSymbolRule);
+        private readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+        private readonly DiagnosticDescriptor _symbolIsBannedRule;
+        private readonly DiagnosticDescriptor _duplicateBannedSymbolRule;
 
-        protected sealed override DiagnosticDescriptor SymbolIsBannedRule => SymbolIsBannedAnalyzer.SymbolIsBannedRule;
+        public SymbolIsBannedAnalyzer(DiagnosticSeverity diagnosticSeverity)
+        {
+            _symbolIsBannedRule = new DiagnosticDescriptor(
+                id: "RS0030",
+                title: "Do not use banned APIs",
+                messageFormat: "The symbol '{0}' is banned in this project{1}",
+                category: "ApiDesign",
+                defaultSeverity: diagnosticSeverity,
+                isEnabledByDefault: true,
+                description: "The symbol has been marked as banned in this project, and an alternate should be used instead.",
+                helpLinkUri: "https://github.com/iwate/StandaloneBannedApiAnalyzers/blob/main/StandaloneBannedApiAnalyzers.Help.md");
+            
+            _duplicateBannedSymbolRule = new DiagnosticDescriptor(
+                id: "RS0031",
+                title: "he list of banned symbols contains a duplicate",
+                messageFormat: "The symbol '{0}' is listed multiple times in the list of banned APIs",
+                category: "ApiDesign",
+                defaultSeverity: diagnosticSeverity,
+                isEnabledByDefault: true,
+                description: "The list of banned symbols contains a duplicate.",
+                helpLinkUri: "https://github.com/iwate/StandaloneBannedApiAnalyzers/blob/main/StandaloneBannedApiAnalyzers.Help.md");
+
+            _supportedDiagnostics = ImmutableArray.Create(_symbolIsBannedRule, _duplicateBannedSymbolRule);
+        }
+
+        public sealed override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => _supportedDiagnostics;
+        protected sealed override DiagnosticDescriptor SymbolIsBannedRule => _symbolIsBannedRule;
 
 #pragma warning disable RS1013 // 'compilationContext' does not register any analyzer actions, except for a 'CompilationEndAction'. Consider replacing this start/end action pair with a 'RegisterCompilationAction' or moving actions registered in 'Initialize' that depend on this start action to 'compilationContext'.
         protected sealed override Dictionary<(string ContainerName, string SymbolName), ImmutableArray<BanFileEntry>> ReadBannedApis(
@@ -84,7 +87,7 @@ namespace StandaloneBannedApiAnalyzers
                     {
                         var nextEntry = groupList[i];
                         errors.Add(Diagnostic.Create(
-                            SymbolIsBannedAnalyzer.DuplicateBannedSymbolRule,
+                            _duplicateBannedSymbolRule,
                             nextEntry.Location, new[] { firstEntry.Location },
                             firstEntry.Symbols.FirstOrDefault()?.ToDisplayString() ?? ""));
                     }
