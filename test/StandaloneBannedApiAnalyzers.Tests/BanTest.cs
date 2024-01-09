@@ -110,6 +110,13 @@ public class BanTest
     [InlineData("N:N", """
                 N.BannedType.StaticBannedEvent += (object sender, EventArgs e) => {};
                 """)]
+    [InlineData("N:System.Reflection", """
+                var m = typeof(N.BannedType).GetMethod("BannedMethod", Type.EmptyTypes);
+                m.Invoke(new N.BannedType(), null);
+                """)]
+    [InlineData("N:System.Reflection", """
+                typeof(N.BannedType).GetMethod("BannedMethod", Type.EmptyTypes).Invoke(new N.BannedType(), null);
+                """)]
     public async Task ShouldBeBanned(string additionalText, string code)
     {
         var empty = new BannedSymbolsAdditionalText("");

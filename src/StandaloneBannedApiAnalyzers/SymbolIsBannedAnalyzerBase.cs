@@ -58,6 +58,7 @@ namespace StandaloneBannedApiAnalyzers
                     {
                         IdentifierNameSyntax => context.SemanticModel.GetTypeInfo(node).Type,
                         ObjectCreationExpressionSyntax => context.SemanticModel.GetTypeInfo(node).Type,
+                        MemberAccessExpressionSyntax m => context.SemanticModel.GetTypeInfo(m.Parent).Type, 
                         _ => null
                     };
                     
