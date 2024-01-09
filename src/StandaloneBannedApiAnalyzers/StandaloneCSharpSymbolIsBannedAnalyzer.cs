@@ -13,6 +13,11 @@ namespace StandaloneBannedApiAnalyzers
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class StandaloneCSharpSymbolIsBannedAnalyzer : SymbolIsBannedAnalyzer<SyntaxKind>
     {
+        public StandaloneCSharpSymbolIsBannedAnalyzer(DiagnosticSeverity diagnosticSeverity) 
+            : base(diagnosticSeverity)
+        {
+        }
+
         protected override SyntaxKind XmlCrefSyntaxKind => SyntaxKind.XmlCrefAttribute;
 
         protected override ImmutableArray<SyntaxKind> BaseTypeSyntaxKinds => ImmutableArray.Create(SyntaxKind.BaseList);

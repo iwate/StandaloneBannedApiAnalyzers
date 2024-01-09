@@ -41,7 +41,7 @@ public class Csx
         var compilation = script.GetCompilation();
         
         var analyzers = ImmutableArray.Create<DiagnosticAnalyzer>(
-            new StandaloneCSharpSymbolIsBannedAnalyzer()
+            new StandaloneCSharpSymbolIsBannedAnalyzer(DiagnosticSeverity.Error)
         );
 
         var compilationWithAnalyzers = new CompilationWithAnalyzers(
