@@ -30,10 +30,10 @@ namespace StandaloneBannedApiAnalyzers
             
             _duplicateBannedSymbolRule = new DiagnosticDescriptor(
                 id: "RS0031",
-                title: "he list of banned symbols contains a duplicate",
+                title: "The list of banned symbols contains a duplicate",
                 messageFormat: "The symbol '{0}' is listed multiple times in the list of banned APIs",
                 category: "ApiDesign",
-                defaultSeverity: diagnosticSeverity,
+                defaultSeverity: DiagnosticSeverity.Warning,
                 isEnabledByDefault: true,
                 description: "The list of banned symbols contains a duplicate.",
                 helpLinkUri: "https://github.com/iwate/StandaloneBannedApiAnalyzers/blob/main/StandaloneBannedApiAnalyzers.Help.md");
